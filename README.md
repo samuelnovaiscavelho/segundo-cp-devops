@@ -15,7 +15,7 @@
 
 ### Post DimDim
 
-[POST] - http://epictaskcheckpointacr.eastus.azurecontainer.io:8080/api/task/idDB
+[POST] - http://epictaskcheckpointacr.eastus.azurecontainer.io:8080/api/task/
 
 ```diff
 - (* required)
