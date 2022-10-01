@@ -57,7 +57,7 @@
 ## Passo a Passo dos comandos para criação dos recursos Azure
 
 ```
-==> banco de dados <==
+==> Banco de Dados <==
 
 az group create --name rg-checkpoint --location eastus
 
@@ -73,11 +73,11 @@ az sql db create -g rg-checkpoint -s sqlserver-rm88233 -n pythondb --service-obj
 ```
 
 ```
-==> Criar uma regra para deixar todos os IPs acessarem seu Banco <==
+==> Criar uma regra para deixar todos os IPs acessarem o Banco <==
 az sql server firewall-rule create -g rg-checkpoint -s sqlserver-rm88233 -n AllowAll --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
 ```
 ```
-==> subindo imagem ACR <==
+==> Subindo Imagem ACR <==
 
 docker azure login
 
@@ -102,7 +102,7 @@ az acr repository list --name epictaskcheckpointacr --output table
 
 ```
 
-==> Deploy de imagem do ACR no ACI <==
+==> Deploy de Imagem do ACR no ACI <==
 
 az login
 
