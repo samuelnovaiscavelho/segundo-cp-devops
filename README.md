@@ -5,43 +5,17 @@
 
 ### Obs: Esse projeto foi baseado no código e matéria de Digital Business Enablement 
 
-# Cliente - Customer
-### POST REGISTER
+# ACR e ACI
+### Get DimDim
 
-[POST] - http://localhost:8080/user/customer/register
-```
-{
-	"name": "Everton",
-	"address": {
-		"street": "Rua das Ruas",
-		"district": "Bairro",
-		"city": "Cidade",
-		"state": "Estado",
-		"zipCode": "00000-000"
-	},
-	"userLogin" : {
-		"username" : "cliente@email.com",
-		"password" : "colocarSenha"
-	},
-	"cpf": "000.000.000-00"
-}
-```
+[GET] - http://epictaskcheckpointacr.eastus.azurecontainer.io:8080/api/task/
 
-### POST LOGIN
 
-[POST] - http://localhost:8080/user/customer/login
-```
-{
-	"username" : "cliente@email.com",
-	"password" : "colocarSenha"
-}
-```
 
-### GET CUSTOMER
 
-[GET] - http://localhost:8080/user/customer/get
+### Post DimDim
 
-Authorization -> **Type:** Basic Auth
+[POST] - http://epictaskcheckpointacr.eastus.azurecontainer.io:8080/api/task/idDB
 
 ```diff
 - (* required)
@@ -49,34 +23,106 @@ Authorization -> **Type:** Basic Auth
 - [x] Username
 - [x] Password
 
-
-### PATCH UPDATE CUSTOMER
-
-[PATCH] - http://localhost:8080/user/customer/update
 ```
 {
-	"name": "nomeCliente"
+	"username" : "joao@fiap.com.br",
+	"password" : "123"
 }
 ```
-Authorization -> **Type:** Basic Auth
 
-```diff
-- (* required)
 ```
-- [x] Username
-- [x] Password
-
-### DELETE CUSTOMER
-
-[DELETE] - http://localhost:8080/user/customer/delete
-
-Authorization -> **Type:** Basic Auth
-
-```diff
-- (* required)
+{
+      "title": "Modelar o BD",
+      "description": "Modelar as tabelas do banco",
+      "score": 100
+}
 ```
-- [x] Username
-- [x] Password
+
+### Del DimDim
+
+[DEL] - http://epictaskcheckpointacr.eastus.azurecontainer.io:8080/api/task/idBD
+
+
+
+### Put DimDim
+
+[PUT] - http://epictaskcheckpointacr.eastus.azurecontainer.io:8080/api/task/idBD
+```
+{
+      "title": "BeLive CP2",
+      "description": "Banco de Dados Azure",
+      "score": 100
+}
+```
+## Passo a Passo dos comandos para criação dos recursos Azure
+
+```
+== banco de dados ==
+
+az group create --name rg-checkpoint --location eastus
+
+-- Criar  o servidor PaaS Azure SQL
+az sql server create -l eastus -g rg-checkpoint -n sqlserver-rm88233 -u admsql -p devops@fiap21 --enable-public-network true
+
+-- Criar o banco de dados pythondb
+az sql db create -g rg-checkpoint -s sqlserver-rm88233 -n pythondb --service-objective Free --backup-storage-redundancy Local --zone-redundant false
+
+-- Criar uma regra para deixar todos os IPs acessarem seu Banco
+az sql server firewall-rule create -g rg-checkpoint -s sqlserver-rm88233 -n AllowAll --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
+
+```
+```
+== subindo imagem ACR ==
+
+docker azure login
+
+az login
+
+az acr create --resource-group rg-checkpoint --name epictaskcheckpointacr --sku Basic
+
+az acr login --name epictaskcheckpointacr
+
+docker build -t epic-task .
+
+docker tag epic-task epictaskcheckpointacr.azurecr.io/epic-task:v1
+
+docker push epictaskcheckpointacr.azurecr.io/epic-task:v1
+
+docker rmi epictaskcheckpointacr.azurecr.io/epic-task:v1 -f
+
+docker image rm epic-task
+
+az acr repository list --name epictaskcheckpointacr --output table
+```
+
+```
+
+== Deploy de imagem do ACR no ACI ==
+
+az login
+
+COPIAR NO PORTAL
+
+az acr login --name epictaskcheckpointacr --username epictaskcheckpointacr --password Wp7RIZGXUNjVZ6MGVcHrJkWCfW+VZG8R
+
+Windows: 
+
+az container create --resource-group rg-checkpoint  --name epictaskcheckpointacr --image epictaskcheckpointacr.azurecr.io/epic-task:v1 --cpu 1 --memory 1 --registry-login-server  epictaskcheckpointacr.azurecr.io --registry-username epictaskcheckpointacr --registry-password Wp7RIZGXUNjVZ6MGVcHrJkWCfW+VZG8R  --ip-address Public  --dns-name-label epictaskcheckpointacr --ports 3000 80 8080
+
+```
+
+
+```
+== DEPOIS DO DEPLOY ==
+
+Copiar fqdn e IP
+    "fqdn": "epictaskcheckpointacr.eastus.azurecontainer.io",
+    "ip": "20.246.175.219",
+
+```
+
+
+
 
 
 ## DDL
