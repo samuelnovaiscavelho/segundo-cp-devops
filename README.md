@@ -57,22 +57,27 @@
 ## Passo a Passo dos comandos para criação dos recursos Azure
 
 ```
-== banco de dados ==
+==> banco de dados <==
 
 az group create --name rg-checkpoint --location eastus
 
--- Criar  o servidor PaaS Azure SQL
+```
+
+```
+==> Criar  o servidor PaaS Azure SQL <==
 az sql server create -l eastus -g rg-checkpoint -n sqlserver-rm88233 -u admsql -p devops@fiap21 --enable-public-network true
-
--- Criar o banco de dados pythondb
+```
+```
+==> Criar o banco de dados pythondb <==
 az sql db create -g rg-checkpoint -s sqlserver-rm88233 -n pythondb --service-objective Free --backup-storage-redundancy Local --zone-redundant false
+```
 
--- Criar uma regra para deixar todos os IPs acessarem seu Banco
+```
+==> Criar uma regra para deixar todos os IPs acessarem seu Banco <==
 az sql server firewall-rule create -g rg-checkpoint -s sqlserver-rm88233 -n AllowAll --start-ip-address 0.0.0.0 --end-ip-address 255.255.255.255
-
 ```
 ```
-== subindo imagem ACR ==
+==> subindo imagem ACR <==
 
 docker azure login
 
@@ -97,7 +102,7 @@ az acr repository list --name epictaskcheckpointacr --output table
 
 ```
 
-== Deploy de imagem do ACR no ACI ==
+==> Deploy de imagem do ACR no ACI <==
 
 az login
 
@@ -113,7 +118,7 @@ az container create --resource-group rg-checkpoint  --name epictaskcheckpointacr
 
 
 ```
-== DEPOIS DO DEPLOY ==
+==> DEPOIS DO DEPLOY <==
 
 Copiar fqdn e IP
     "fqdn": "epictaskcheckpointacr.eastus.azurecontainer.io",
